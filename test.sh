@@ -1,16 +1,72 @@
-#!/bin/bash
+#!/bin/bash -x
+GOOS=linux
 
+
+# parse cla
+while [[ $# > 0 ]] ; do
+  if [ "$1" == "--mac" ]; then
+    shift 1
+    unset GOOS
+    export useMac=true
+    echo "Building for mac"
+  elif [[ "$1" == "--terraform" ]]; then
+    shift 1
+    useTerraform=true
+  else
+    echo "unrecognized cla"
+    exit 1
+  fi
+done
+
+
+
+# build
 go build
-
-if [ ! -f main.go ]; then
-  echo "no source files"
+if [[ $? != 0 ]]; then
+  echo "go build failed"
   exit 1
 fi
 
-if [ $? != 0 ]; then
-  echo "build failed"
+if [[ ! -f main.go ]]; then
+  echo "no go source files"
   exit 1
 fi
 
-./react-app
+if [[ ! -d hello-world/node_modules ]]; then
+  echo "installing deps"
+  pushd hello-world
+  npm install
+  if [ $? != 0 ]; then
+    echo "npm install failed"
+    exit 1
+    popd
+  fi
+  popd
+fi
 
+if [[ ! -d hello-world/build ]]; then
+  echo "building site"
+  pushd hello-world
+  npm run-script build
+  if [ $? != 0 ]; then
+    echo "npm build failed"
+    exit 1
+    popd
+  fi
+  popd
+fi
+
+# run
+if [[ -n "$useMac" ]]; then
+  ./react-app
+else
+  docker rmi sous:alpha
+  docker build . -t sous:alpha
+
+  if [[ -n "$useTerraform" ]]; then
+    echo "terraform unscripted at the moment"
+    exit 1
+  else
+    docker run -it --rm -p 8100:8100 sous:alpha
+  fi
+fi
