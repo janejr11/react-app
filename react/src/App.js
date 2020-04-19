@@ -8,7 +8,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Edit <code>src/App.js</code> and foo to reload.
         </p>
         <a
           className="App-link"
@@ -20,6 +20,14 @@ function App() {
         </a>
       </header>
     </div>
+
+    // <SplitPane split="vertical" minSize={50}>
+    //   <div />
+    //   <SplitPane split="horizontal">
+    //     <div />
+    //     <div />
+    //   </SplitPane>
+    // </SplitPane>
   );
 }
 

@@ -2,3 +2,4 @@ react-app
 .terraform/
 *.tfstate
 *.tfstate.*
+main

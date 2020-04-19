@@ -8,7 +8,7 @@ import (
 
 func main() {
 	port := flag.String("p", "8100", "port to serve on")
-	directory := flag.String("d", "hello-world/build", "the directory of static file to host")
+	directory := flag.String("d", "react/build", "the directory of static file to host")
 	flag.Parse()
 
 	http.Handle("/", http.FileServer(http.Dir(*directory)))

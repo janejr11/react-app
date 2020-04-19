@@ -12,6 +12,9 @@ while [[ $# > 0 ]] ; do
   elif [[ "$1" == "--terraform" ]]; then
     shift 1
     useTerraform=true
+  elif [[ "$1" == "--buildSite" ]]; then
+    ALWAYSBUILDSITE=true
+    shift 1
   else
     echo "unrecognized cla"
     exit 1
@@ -21,7 +24,7 @@ done
 
 
 # build
-go build
+go build main.go
 if [[ $? != 0 ]]; then
   echo "go build failed"
   exit 1
@@ -32,9 +35,9 @@ if [[ ! -f main.go ]]; then
   exit 1
 fi
 
-if [[ ! -d hello-world/node_modules ]]; then
+if [[ ! -d react/node_modules ]]; then
   echo "installing deps"
-  pushd hello-world
+  pushd react
   npm install
   if [ $? != 0 ]; then
     echo "npm install failed"
@@ -44,9 +47,9 @@ if [[ ! -d hello-world/node_modules ]]; then
   popd
 fi
 
-if [[ ! -d hello-world/build ]]; then
+if [[ ! -d react/build || -n "$ALWAYSBUILDSITE" ]]; then
   echo "building site"
-  pushd hello-world
+  pushd react
   npm run-script build
   if [ $? != 0 ]; then
     echo "npm build failed"
@@ -58,7 +61,7 @@ fi
 
 # run
 if [[ -n "$useMac" ]]; then
-  ./react-app
+  ./main
 else
   docker rmi sous:alpha
   docker build . -t sous:alpha
