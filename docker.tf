@@ -4,9 +4,9 @@ provider "docker" {
 }
 
 # Create a container
-resource "docker_container" "sous" {
+resource "docker_container" "react-app" {
   image = "${docker_image.react-app.latest}"
-  name  = "sous"
+  name  = "react-app"
   ports {
     internal = 8100
 	external = 8100
