@@ -1,6 +1,10 @@
 #!/bin/bash -x
+set -eou pipefail
+
 GOOS=linux
 
+PROJECT_NAME="react"
+ALWAYSBUILDSITE=false
 
 # parse cla
 while [[ $# > 0 ]] ; do
@@ -9,6 +13,9 @@ while [[ $# > 0 ]] ; do
     unset GOOS
     export useMac=true
     echo "Building for mac"
+  elif [[ "$1" == "--projectName" ]]; then
+    PROJECT_NAME="$2"
+    shift 2
   elif [[ "$1" == "--terraform" ]]; then
     shift 1
     useTerraform=true
@@ -35,9 +42,9 @@ if [[ ! -f main.go ]]; then
   exit 1
 fi
 
-if [[ ! -d react/node_modules ]]; then
+if [[ ! -d ${PROJECT_NAME}/node_modules ]]; then
   echo "installing deps"
-  pushd react
+  pushd ${PROJECT_NAME}
   npm install
   if [ $? != 0 ]; then
     echo "npm install failed"
@@ -47,9 +54,9 @@ if [[ ! -d react/node_modules ]]; then
   popd
 fi
 
-if [[ ! -d react/build || -n "$ALWAYSBUILDSITE" ]]; then
+if [[ ! -d "${PROJECT_NAME}/build" || -n "${ALWAYSBUILDSITE}" ]]; then
   echo "building site"
-  pushd react
+  pushd ${PROJECT_NAME}
   npm run-script build
   if [ $? != 0 ]; then
     echo "npm build failed"
