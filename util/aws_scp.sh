@@ -20,11 +20,11 @@ if [[ -z "$keyPath" || -z "$amiAddr" ]]; then
   exit 1
 fi
 
-docker save sous:alpha > sous.tar
+docker save react-app:alpha > react-app.tar
 
 if [ $? != 0 ]; then
   echo "failed to save docker as tar"
   exit 1
 fi
 
-scp -i "$keyPath" sous.tar $amiAddr:~
+scp -i "$keyPath" react-app.tar $amiAddr:~

@@ -57,9 +57,9 @@ fi
 if [[ ! -d "${PROJECT_NAME}/build" || -n "${ALWAYSBUILDSITE}" ]]; then
   echo "building site"
   pushd ${PROJECT_NAME}
-  npm run-script build
+  npm run-script start
   if [ $? != 0 ]; then
-    echo "npm build failed"
+    echo "npm start failed"
     exit 1
     popd
   fi
@@ -70,13 +70,13 @@ fi
 if [[ -n "$useMac" ]]; then
   ./main
 else
-  docker rmi sous:alpha
-  docker build . -t sous:alpha
+  docker rmi react-app:alpha
+  docker build . -t react-app:alpha
 
   if [[ -n "$useTerraform" ]]; then
     echo "terraform unscripted at the moment"
     exit 1
   else
-    docker run -it --rm -p 8100:8100 sous:alpha
+    docker run -it --rm -p 8100:8100 react-app:alpha
   fi
 fi
